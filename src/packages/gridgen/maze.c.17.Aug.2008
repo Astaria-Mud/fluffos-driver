@@ -1,0 +1,100 @@
+// maze.c
+
+#include "gridgen.h"
+
+#define MAX_NUM_PASSAGES 500
+
+/*---------------------------------------------------------------------------
+  _genMaze ()
+  
+  Generates a maze terrain within a grid.  Returns 1 on success or 0 on
+  failure.  Failure can occur if corridors cannot be placed within the grid
+  (due to no room).
+
+  -1 is returned if point pool stack capacity is exceeded.
+  -2 is returned if bad parameters are specified.
+
+  startPoint, when non-NULL, specifies the start location of the first
+  passageway.  Otherwise, a random point within the grid is selected as the
+  first passage.
+
+  minPassages and maxPassages specify a range of passages for the generated
+  grid to contain.
+  ---------------------------------------------------------------------------*/
+static int _genMaze (Grid *grid, Point2d *startPoint,
+		     int minPassages, int maxPassages)
+{
+  Point2d pt;
+  int numPassages, lastNdx, result, numRestarts, count;
+
+  if (!grid || !grid->buf)
+    return -2;
+
+  if (minPassages > maxPassages)
+    return -2;
+
+  if (maxPassages > MAX_NUM_PASSAGES)
+    return -2;
+
+  _clearPoint2dPool ();
+  numPassages = (rand () % (maxPassages - minPassages + 1)) + minPassages;
+  //numRestarts = count = 0;
+
+  if (startPoint)
+    {
+      pt.x = startPoint->x;
+      pt.y = startPoint->y;
+    }
+  else
+    {
+      pt.x = rand () % grid->width;
+      pt.y = rand () % grid->height;
+    }
+
+  _pushPoint2d (pt);
+  do
+    {
+      if (numRestarts > ABORT_THRESHOLD)
+	{
+	  _deinitGrid (grid);
+	  _clearPoint2dPool ();
+	  return 0;
+	}
+
+      if (count > RESTART_THRESHOLD)
+	{
+	  numPassages = (rand () % (maxPassages - minPassages + 1)) 
+	    + minPassages;	  
+	  _deinitGrid (grid);
+	  _initGrid (grid);
+	  count = 0;
+
+	  pt = *(_getPoint2d (rand () % _getPoolNdx ()));
+	  _clearPoint2dPool ();
+	  _pushPoint2d (pt);
+
+	  numRestarts++;
+	}
+
+      lastNdx = _getPoolNdx (); // save stack before corridor generation
+
+      result = _generateTwist (grid, pt, 10, 20); // length 10 to 20
+      if (result > 0)
+	{
+	  _drawPreviousTwist (grid, TUNNEL);
+	  numPassages--;
+	}
+      else if (-1 == result)
+	return -1; // out of memory
+      else
+	_setPoolNdx (lastNdx); // restore stack after corridor generation
+                               // if corridor isn't drawn due to overlap
+
+      // Pick a random point in the pool as the start for next corridor
+      pt = *(_getPoint2d (rand () % _getPoolNdx ()));
+      count++;
+    }
+  while (numPassages);
+
+  return 1;
+} // _genMaze

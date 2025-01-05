@@ -332,3 +332,71 @@ void f_angle() {
   push_real(acos(dot / (norma * normb)));
 }
 #endif
+#ifdef F_DIMVAL
+void 
+f_dimval()
+{
+  double mult, max_in, max_out, min_in, min_out, rate, seed;
+  LPC_FLOAT ta, tb, result;
+  int num_arg = st_num_arg;
+  svalue_t *arg = sp - num_arg + 1;
+
+  min_in = 
+  min_out = 0.0;
+  rate = 1.0;
+
+  seed    = arg[0].u.real;
+  max_in  = arg[1].u.real;
+  max_out = arg[2].u.real;
+
+  if (num_arg > 3) min_in  = arg[3].u.real;
+  if (num_arg > 4) min_out = arg[4].u.real;
+  if (num_arg > 5) rate    = arg[5].u.real;
+  if (seed > max_in) seed = max_in;
+  if (seed < min_in) seed = min_in;
+  mult = (max_out - min_out);
+
+  ta = (seed - min_in) / (max_in - min_in);
+  tb = sqrt(ta) / rate;
+  result = (tb * mult) + min_out;
+  if (result > max_out) result = max_out;
+  pop_n_elems(num_arg);
+  push_real(result);
+}
+#endif
+
+#ifdef F_DIMVAL
+void
+f_incval()
+{
+  double mult, max_in, max_out, min_in, min_out, rate, seed;
+  LPC_FLOAT ta, tb, result;
+  int num_arg = st_num_arg;
+  svalue_t *arg = sp - num_arg + 1;
+
+  min_in = 
+  min_out = 0.0;
+  rate = 1.0;
+
+  seed    = arg[0].u.real;
+  max_in  = arg[1].u.real;
+  max_out = arg[2].u.real;
+
+  if (num_arg > 3) min_in  = arg[3].u.real;
+  if (num_arg > 4) min_out = arg[4].u.real;
+  if (num_arg > 5) rate    = arg[5].u.real;
+  if (seed > max_in) seed = max_in;
+  if (seed < min_in) seed = min_in;
+  mult = (max_out - min_out);
+  rate /= 10;
+
+  ta = (seed - min_in) / (max_in - min_in);
+  tb = ((seed /10)*rate)*sqrt(ta);
+  result = (tb * mult) + min_out;
+  if (result > max_out) result = max_out;
+
+  pop_n_elems(num_arg);
+  push_real(result);
+}
+#endif
+

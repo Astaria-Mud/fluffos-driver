@@ -17,3 +17,6 @@
     float dotprod(int *|float *, int *|float *);
     float distance(int *|float *, int *|float *);
     float angle(int *|float *, int *|float *);
+    float dimval(float, float, float, float | void, float | void, float | void);
+    float incval(float, float, float, float | void, float | void, float | void);
+    

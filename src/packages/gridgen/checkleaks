@@ -1,0 +1,1 @@
+ps -ef -o vsz,pid,args | grep a.out

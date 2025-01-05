@@ -27,22 +27,29 @@
 #undef NO_LIGHT
 #define OLD_ED
 #undef ED_INDENT_CASE
-#define ED_INDENT_SPACES 4
+#define ED_INDENT_SPACES 2
 #undef ED_USE_TABS
-#define ED_TAB_WIDTH 8
+#define ED_TAB_WIDTH 2
 #undef RECEIVE_ED
 #define RESTRICTED_ED
 #define SENSIBLE_MODIFIERS
+#undef COMPAT_32
+
 
 /****************************************************************************
  *                           MISCELLANEOUS                                  *
  ****************************************************************************/
-#define DEFAULT_PRAGMAS PRAGMA_WARNINGS + PRAGMA_SAVE_TYPES + PRAGMA_ERROR_CONTEXT + PRAGMA_OPTIMIZE
+//#define DEFAULT_PRAGMAS PRAGMA_WARNINGS + PRAGMA_SAVE_TYPES + PRAGMA_ERROR_CONTEXT + PRAGMA_OPTIMIZE
+#define DEFAULT_PRAGMAS PRAGMA_ERROR_CONTEXT + PRAGMA_SAVE_TYPES + PRAGMA_OPTIMIZE + PRAGMA_SAVE_BINARY
+
 #define SAVE_EXTENSION ".o"
-#define PRIVS
+#undef PRIVS
 #undef NO_SHADOWS
-#undef USE_ICONV
+#define USE_ICONV
 #undef IPV6
+#define DTRACE
+#define LPC_TO_C
+
 
 /****************************************************************************
  *                              PACKAGES                                    *
@@ -58,10 +65,12 @@
 #define SAVE_GZ_EXTENSION ".o.gz"
 
 // configs for PACKAGE_UIDS
-#define AUTO_SETEUID
-#undef AUTO_TRUST_BACKBONE
+#undef AUTO_SETEUID
+#define AUTO_TRUST_BACKBONE
 
 // configs for PACKAGE_PARSE
-#define PARSE_DEBUG /* Only take effect in DEBUG build */
+#undef PARSE_DEBUG /* Only take effect in DEBUG build */
+
+#define REF_RESERVED_WORD
 
 #endif /* _LOCAL_OPTIONS_H_ */
